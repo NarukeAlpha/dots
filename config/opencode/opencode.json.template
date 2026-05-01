@@ -1,0 +1,65 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "exa": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "exa-mcp-server"
+      ],
+      "environment": {
+        "EXA_API_KEY": "__EXA_API_KEY__"
+      },
+      "enabled": true,
+      "timeout": 30000
+    },
+    "rp_dev": {
+      "type": "local",
+      "command": [
+        "node",
+        "__HOME__/.local/share/rp-mcp/dist/src/index.js",
+        "-dev"
+      ],
+      "environment": {
+        "CONVEX_SITE_URL": "https://usable-donkey-388.convex.site",
+        "CONVEX_WRITE_KEY": "__CONVEX_WRITE_KEY_DEV__"
+      },
+      "enabled": true,
+      "timeout": 120000
+    },
+    "rp_prod": {
+      "type": "local",
+      "command": [
+        "node",
+        "__HOME__/.local/share/rp-mcp/dist/src/index.js",
+        "-prod"
+      ],
+      "environment": {
+        "CONVEX_SITE_URL": "https://ardent-firefly-400.convex.site",
+        "CONVEX_WRITE_KEY": "__CONVEX_WRITE_KEY_PROD__"
+      },
+      "enabled": true,
+      "timeout": 120000
+    }
+  },
+  "permission": "allow",
+  "disabled_providers": [],
+  "provider": {
+    "arcee": {
+      "name": "Arcee",
+      "npm": "@ai-sdk/openai-compatible",
+      "models": {
+        "trinity-large-thinking": {
+          "name": "Trinity Large Think"
+        },
+        "trinity-mini": {
+          "name": "Tinity Mini"
+        }
+      },
+      "options": {
+        "baseURL": "https://api.arcee.ai/api/v1"
+      }
+    }
+  }
+}

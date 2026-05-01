@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "X Sync",
+  "version": "0.1.0",
+  "description": "Save X posts and shared links into your personal blog bookmarks.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://x.com/*",
+    "https://twitter.com/*",
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "X Sync",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://twitter.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+personality = "pragmatic"
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+
+[projects."__HOME__"]
+trust_level = "trusted"
+
+[projects."/"]
+trust_level = "trusted"
+
+[mcp_servers.exa]
+enabled = true
+command = "npx"
+args = ["-y", "exa-mcp-server"]
+env = { EXA_API_KEY = "__EXA_API_KEY__" }
+tool_timeout_sec = 30.0
+
+[mcp_servers.rp_prod]
+enabled = true
+command = "node"
+args = ["__HOME__/.local/share/rp-mcp/dist/src/index.js", "-prod"]
+startup_timeout_sec = 120.0
+tool_timeout_sec = 120.0
+
+[mcp_servers.rp_prod.env]
+CONVEX_SITE_URL = "https://ardent-firefly-400.convex.site"
+CONVEX_WRITE_KEY = "__CONVEX_WRITE_KEY_PROD__"
+
+[features]
+prevent_idle_sleep = true
+
+[tui]
+status_line = ["model-with-reasoning", "current-dir", "model-name", "project-root", "git-branch", "context-usage", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens"]
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.4"

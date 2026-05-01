@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+OBSIDIAN_VAULT_PATH="${OBSIDIAN_VAULT_PATH:-}"
+
+if [ -z "$OBSIDIAN_VAULT_PATH" ]; then
+  print -u2 "Set OBSIDIAN_VAULT_PATH before running this script."
+  exit 1
+fi
+
+cd "$OBSIDIAN_VAULT_PATH" || exit 1
+exec opencode "$@"
