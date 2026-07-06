@@ -60,6 +60,13 @@
       "options": {
         "baseURL": "https://api.arcee.ai/api/v1"
       }
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "https://api.deepseek.com/v1"
+      }
     }
   }
 }

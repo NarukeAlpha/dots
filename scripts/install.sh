@@ -94,6 +94,25 @@ install_file() {
   echo "Installed $target"
 }
 
+install_directory() {
+  local source="$1"
+  local target="$2"
+  mkdir -p "$(dirname "$target")"
+  if [ -e "$target" ] || [ -L "$target" ]; then
+    if [ "$FORCE" -ne 1 ]; then
+      echo "Skipping existing $target (use --force to replace)"
+      return 0
+    fi
+    local backup="${BACKUP_ROOT}${target}"
+    mkdir -p "$(dirname "$backup")"
+    cp -pR "$target" "$backup"
+    echo "Backed up $target -> $backup"
+    rm -rf "$target"
+  fi
+  cp -pR "$source" "$target"
+  echo "Installed $target"
+}
+
 require_env() {
   local missing=0
   for name in "$@"; do
@@ -210,8 +229,16 @@ if [ "$INSTALL_TOOLS" -eq 1 ]; then
 fi
 
 install_file "${DOTS_ROOT}/scripts/opencode-obsidian" "${HOME}/.local/bin/oco" 0755
+install_file "${DOTS_ROOT}/scripts/ghada" "${HOME}/.local/bin/ghada" 0755
+install_file "${DOTS_ROOT}/scripts/ghada-store-token" "${HOME}/.local/bin/ghada-store-token" 0755
+mkdir -p "${HOME}/.config/ghada"
+chmod 0700 "${HOME}/.config/ghada"
 
 install_file "${DOTS_ROOT}/config/codex/rules/default.rules" "${HOME}/.codex/rules/default.rules"
+for skill_dir in "${DOTS_ROOT}"/config/codex/skills/*; do
+  [ -d "$skill_dir" ] || continue
+  install_directory "$skill_dir" "${HOME}/.codex/skills/$(basename "$skill_dir")"
+done
 
 install_file "${DOTS_ROOT}/config/opencode/package.json" "${HOME}/.config/opencode/package.json"
 

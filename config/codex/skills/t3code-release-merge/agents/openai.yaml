@@ -1,0 +1,4 @@
+interface:
+  display_name: "T3Code Release Merge"
+  short_description: "Merge T3Code feature PR heads into release safely."
+  default_prompt: "Use the T3Code release merge workflow to sync release with main, merge selected PR heads, resolve conflicts, verify gates, and preserve PR branch intent."

@@ -8,12 +8,14 @@ configuration.
 
 ## Contents
 
-- `config/codex/`: Codex config template and rules.
+- `config/codex/`: Codex config template, rules, and installable skills.
 - `config/opencode/`: OpenCode config template and package metadata.
 - `list.md`: living inventory of commands, configs, software, and clean-machine
   install targets.
 - `scripts/install.sh`: bootstraps Node.js 24 and Codex CLI, then installs the
   setup onto a machine with backups.
+- `scripts/ghada` and `scripts/ghada-store-token`: isolated GitHub CLI profile
+  wrapper backed by a dedicated macOS Keychain item.
 - `scripts/sync.sh`: reads local Codex/OpenCode setup and refreshes public-safe
   templates in this repo.
 - `scripts/opencode-auth-keychain.sh`: backs up/restores OpenCode auth through
@@ -56,6 +58,39 @@ To refresh templates from the current machine:
 ./scripts/sync.sh
 ./scripts/check-secrets.sh
 ```
+
+## ghada
+
+`ghada` is an isolated GitHub CLI wrapper that reads a fine-grained PAT from
+macOS Keychain service `ghada.github.com`, account `ghada`, and passes it to
+`gh` through `GH_TOKEN`.
+
+Store or replace the PAT:
+
+```bash
+ghada-store-token
+```
+
+The same command also stores a Git HTTPS credential for
+`https://ghada@github.com`, so org remotes can use the dedicated PAT without
+colliding with the regular `github.com` credential.
+
+Use the isolated profile:
+
+```bash
+ghada auth status
+ghada repo list alphadev-ahjin
+```
+
+For HTTPS Git pushes, set org remotes to include the `ghada` username:
+
+```bash
+git remote set-url origin https://ghada@github.com/AlphaDev-AhJin/Control.git
+git push --set-upstream origin <branch>
+```
+
+Do not use `ghada auth login`; the wrapper blocks it because GitHub CLI stores
+that login token in a shared macOS Keychain slot for `github.com`.
 
 To back up OpenCode auth into Keychain:
 

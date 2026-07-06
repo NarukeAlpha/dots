@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+export GH_CONFIG_DIR="${GHADA_CONFIG_DIR:-$HOME/.config/ghada}"
+
+if [[ "${1:-}" == "auth" && "${2:-}" == "login" ]]; then
+  printf "ghada does not use 'gh auth login' because GitHub CLI stores that token in a shared macOS Keychain slot.\n" >&2
+  printf "Use 'ghada-store-token' to store a fine-grained PAT in the dedicated ghada.github.com Keychain item.\n" >&2
+  exit 2
+fi
+
+if [[ -z "${GH_TOKEN:-}" && -z "${GITHUB_TOKEN:-}" ]]; then
+  token="$(security find-generic-password -a ghada -s ghada.github.com -w 2>/dev/null || true)"
+  if [[ -n "$token" ]]; then
+    export GH_TOKEN="$token"
+  elif [[ "${1:-}" != "help" && "${1:-}" != "--help" && "${1:-}" != "-h" && "${1:-}" != "version" ]]; then
+    printf "ghada token is not configured. Run 'ghada-store-token' first.\n" >&2
+    exit 2
+  fi
+  unset token
+fi
+
+exec gh "$@"

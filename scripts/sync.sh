@@ -116,8 +116,28 @@ sync_file_if_present() {
   fi
 }
 
+sync_directory_if_present() {
+  local source="$1"
+  local target="$2"
+  if [ -d "$source" ]; then
+    rm -rf "$target"
+    mkdir -p "$(dirname "$target")"
+    cp -pR "$source" "$target"
+    echo "Synced $target"
+  else
+    echo "Skipping missing $source"
+  fi
+}
+
 sanitize_codex_config
 sync_file_if_present "${HOME}/.codex/rules/default.rules" "${DOTS_ROOT}/config/codex/rules/default.rules"
+for skill_dir in "${DOTS_ROOT}"/config/codex/skills/*; do
+  [ -d "$skill_dir" ] || continue
+  skill_name="$(basename "$skill_dir")"
+  sync_directory_if_present "${HOME}/.codex/skills/$skill_name" "${DOTS_ROOT}/config/codex/skills/$skill_name"
+done
+sync_file_if_present "${HOME}/.local/bin/ghada" "${DOTS_ROOT}/scripts/ghada"
+sync_file_if_present "${HOME}/.local/bin/ghada-store-token" "${DOTS_ROOT}/scripts/ghada-store-token"
 
 sanitize_opencode_config
 sync_file_if_present "${HOME}/.config/opencode/package.json" "${DOTS_ROOT}/config/opencode/package.json"

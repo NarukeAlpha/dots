@@ -1,0 +1,4 @@
+interface:
+  display_name: "T3 Code Branch Sync"
+  short_description: "Sync from fork origin/main without PR changes"
+  default_prompt: "Use $t3code-branch-sync to merge the latest fork origin/main into my current branch without changing the PR."

@@ -17,6 +17,14 @@ session databases, or generated dependency folders.
 - [ ] Authenticate GitHub: `gh auth login`.
 - [ ] Install Node.js 24.
 - [ ] Install Codex CLI with npm: `npm install -g @openai/codex`.
+- [ ] Install React diagnostics with npm:
+
+```bash
+npm install -g react-doctor@latest react-scan@latest
+```
+
+- [ ] Use `react-doctor` for static React codebase diagnostics and
+  `react-scan` for runtime render/performance investigation in browser apps.
 - [ ] Install OpenCode CLI.
 - [ ] Install Bun.
 - [ ] Install latest Go.
@@ -73,6 +81,8 @@ open "obsidian://open"
 ```
 
 - [ ] Confirm Codex config exists at `~/.codex/config.toml`.
+- [ ] Confirm Codex skills from `config/codex/skills/` exist at
+  `~/.codex/skills/`.
 - [ ] Confirm OpenCode config exists at `~/.config/opencode/opencode.json`.
 - [ ] Do not commit rendered configs with real secrets.
 - [ ] After changing local Codex/OpenCode setup, sync public-safe templates back

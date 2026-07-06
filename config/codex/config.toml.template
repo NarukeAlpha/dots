@@ -16,18 +16,8 @@ args = ["-y", "exa-mcp-server"]
 env = { EXA_API_KEY = "__EXA_API_KEY__" }
 tool_timeout_sec = 30.0
 
-[mcp_servers.rp_prod]
-enabled = true
-command = "node"
-args = ["__HOME__/.local/share/rp-mcp/dist/src/index.js", "-prod"]
-startup_timeout_sec = 120.0
-tool_timeout_sec = 120.0
-
-[mcp_servers.rp_prod.env]
-CONVEX_SITE_URL = "https://ardent-firefly-400.convex.site"
-CONVEX_WRITE_KEY = "__CONVEX_WRITE_KEY_PROD__"
-
 [features]
+goals = true
 prevent_idle_sleep = true
 
 [tui]
