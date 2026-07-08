@@ -131,8 +131,12 @@ security add-generic-password -U -s dots -a OBSIDIAN_VAULT_PATH -w "/path/to/vau
 ```
 
 - [ ] Confirm Codex config exists at `~/.codex/config.toml`.
+- [ ] Confirm Codex full-access settings are present when wanted:
+  `approval_policy = "never"` and `sandbox_mode = "danger-full-access"`.
+- [ ] Confirm Codex keybindings exist at `~/.codex/keybindings.json`.
 - [ ] Confirm Codex skills from `config/codex/skills/` exist at
   `~/.codex/skills/`.
+- [ ] Confirm Codex pets from `config/codex/pets/` exist at `~/.codex/pets/`.
 - [ ] Confirm the tracked Codex skill set includes:
   - [ ] `control-cleanup-orchestrator`
   - [ ] `dependency-hygiene`

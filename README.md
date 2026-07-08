@@ -8,7 +8,8 @@ tools.
 
 ## What Is Included
 
-- `config/codex/`: Codex config templates, rules, and installable skills.
+- `config/codex/`: Codex config templates, rules, keybindings, skills, and
+  custom pets.
 - `config/opencode/`: OpenCode config template and package metadata.
 - `personal-setup/extensions/x-sync/`: source for a small Chrome extension.
 - `scripts/`: bootstrap, sync, audit, verification, Keychain, Obsidian, and

@@ -1,0 +1,10 @@
+[
+  {
+    "command": "globalDictationHold",
+    "key": "Alt+L"
+  },
+  {
+    "command": "globalDictationToggle",
+    "key": "Alt+Shift+L"
+  }
+]

@@ -166,6 +166,41 @@ render_template() {
   echo "Rendered $target"
 }
 
+render_codex_config() {
+  local source="${DOTS_ROOT}/config/codex/config.toml.template"
+  local target="${HOME}/.codex/config.toml"
+  mkdir -p "$(dirname "$target")"
+  if [ -e "$target" ] || [ -L "$target" ]; then
+    if [ "$FORCE" -ne 1 ]; then
+      echo "Skipping existing $target (use --force to replace)"
+      return 0
+    fi
+    backup_file "$target"
+  fi
+
+  perl -0pe '
+    s#__HOME__#$ENV{HOME}#g;
+    s#__EXA_API_KEY__#$ENV{EXA_API_KEY} // ""#ge;
+    s#__CONVEX_WRITE_KEY_DEV__#$ENV{CONVEX_WRITE_KEY_DEV} // ""#ge;
+    s#__CONVEX_WRITE_KEY_PROD__#$ENV{CONVEX_WRITE_KEY_PROD} // ""#ge;
+  ' "$source" |
+    awk -v keep_exa="$([ -n "${EXA_API_KEY:-}" ] && printf 1 || printf 0)" '
+      /^\[mcp_servers\.exa\]/ && keep_exa != "1" {
+        skip = 1
+        next
+      }
+      /^\[/ {
+        skip = 0
+      }
+      !skip {
+        print
+      }
+    ' > "$target"
+
+  chmod 0600 "$target"
+  echo "Rendered $target"
+}
+
 install_node_and_codex_macos() {
   if ! command -v brew >/dev/null 2>&1; then
     echo "Homebrew is required for macOS tool bootstrap." >&2
@@ -237,19 +272,25 @@ install_file "${DOTS_ROOT}/scripts/obsidian-open" "${HOME}/.local/bin/obsidian-o
 install_file "${DOTS_ROOT}/scripts/delta-hosts-keychain.sh" "${HOME}/.local/bin/delta-hosts-keychain" 0755
 
 install_file "${DOTS_ROOT}/config/codex/rules/default.rules" "${HOME}/.codex/rules/default.rules"
+install_file "${DOTS_ROOT}/config/codex/keybindings.json" "${HOME}/.codex/keybindings.json"
 for skill_dir in "${DOTS_ROOT}"/config/codex/skills/*; do
   [ -d "$skill_dir" ] || continue
   install_directory "$skill_dir" "${HOME}/.codex/skills/$(basename "$skill_dir")"
+done
+for pet_dir in "${DOTS_ROOT}"/config/codex/pets/*; do
+  [ -d "$pet_dir" ] || continue
+  install_directory "$pet_dir" "${HOME}/.codex/pets/$(basename "$pet_dir")"
 done
 
 install_file "${DOTS_ROOT}/config/opencode/package.json" "${HOME}/.config/opencode/package.json"
 
 if [ "$WITH_SECRETS" -eq 1 ]; then
   require_env EXA_API_KEY CONVEX_WRITE_KEY_DEV CONVEX_WRITE_KEY_PROD
-  render_template "${DOTS_ROOT}/config/codex/config.toml.template" "${HOME}/.codex/config.toml"
+  render_codex_config
   render_template "${DOTS_ROOT}/config/opencode/opencode.json.template" "${HOME}/.config/opencode/opencode.json"
 else
-  echo "Skipped Codex/OpenCode secret-bearing configs. Rerun with --with-secrets to render them."
+  render_codex_config
+  echo "Skipped OpenCode and secret-bearing integrations. Rerun with --with-secrets to render them."
 fi
 
 echo "Install complete."

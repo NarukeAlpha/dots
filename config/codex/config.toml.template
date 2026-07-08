@@ -2,6 +2,10 @@ personality = "pragmatic"
 model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 plan_mode_reasoning_effort = "xhigh"
+approvals_reviewer = "user"
+service_tier = "priority"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
 
 [projects."__HOME__"]
 trust_level = "trusted"
@@ -19,9 +23,53 @@ tool_timeout_sec = 30.0
 [features]
 goals = true
 prevent_idle_sleep = true
+remote_connections = true
+terminal_resize_reflow = true
+memories = true
+js_repl = false
 
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "model-name", "project-root", "git-branch", "context-usage", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens"]
 
+[notice]
+fast_default_opt_out = true
+hide_rate_limit_model_nudge = true
+
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.4"
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."openai-developers@openai-curated"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."codex-security@openai-curated"]
+enabled = true
+
+[plugins."cloudflare@openai-curated"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true

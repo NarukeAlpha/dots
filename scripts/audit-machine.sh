@@ -43,6 +43,36 @@ path_status() {
   fi
 }
 
+toml_value() {
+  local file="$1"
+  local key="$2"
+  if [ ! -f "$file" ]; then
+    printf 'missing\n'
+    return
+  fi
+
+  awk -F= -v key="$key" '
+    {
+      lhs = $1
+      gsub(/^[ \t]+|[ \t]+$/, "", lhs)
+      if (lhs == key) {
+        rhs = $0
+        sub(/^[^=]*=/, "", rhs)
+        gsub(/^[ \t]+|[ \t]+$/, "", rhs)
+        gsub(/^"|"$/, "", rhs)
+        print rhs
+        found = 1
+        exit
+      }
+    }
+    END {
+      if (!found) {
+        print "missing"
+      }
+    }
+  ' "$file"
+}
+
 keychain_status() {
   local service="$1"
   local account="$2"
@@ -109,12 +139,19 @@ done
 section "Installed Config"
 path_status "$HOME/.codex/config.toml"
 path_status "$HOME/.codex/rules/default.rules"
+path_status "$HOME/.codex/keybindings.json"
 path_status "$HOME/.config/opencode/opencode.json"
 path_status "$HOME/.config/opencode/package.json"
 path_status "$HOME/.local/bin/oco"
 path_status "$HOME/.local/bin/obsidian-open"
 path_status "$HOME/.local/bin/delta-hosts-keychain"
 path_status "$HOME/.local/share/opencode/auth.json"
+
+section "Codex Permission Mode"
+for key in approval_policy sandbox_mode; do
+  printf 'repo\t%s\t%s\n' "$key" "$(toml_value "$ROOT/config/codex/config.toml.template" "$key")"
+  printf 'installed\t%s\t%s\n' "$key" "$(toml_value "$HOME/.codex/config.toml" "$key")"
+done
 
 section "Keychain Entries"
 keychain_status dots EXA_API_KEY
@@ -130,6 +167,17 @@ printf 'installed\t%s\n' "$(find "$HOME/.codex/skills" -mindepth 1 -maxdepth 1 -
 find "$HOME/.codex/skills" -mindepth 1 -maxdepth 1 -type d 2>/dev/null |
   sed "s#^$HOME/.codex/skills/##" |
   grep -vi 'claude' |
+  sort
+
+section "Codex Keybindings"
+path_status "$ROOT/config/codex/keybindings.json"
+path_status "$HOME/.codex/keybindings.json"
+
+section "Codex Pets"
+printf 'repo\t%s\n' "$(find "$ROOT/config/codex/pets" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | /usr/bin/wc -l | /usr/bin/tr -d ' ')"
+printf 'installed\t%s\n' "$(find "$HOME/.codex/pets" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | /usr/bin/wc -l | /usr/bin/tr -d ' ')"
+find "$HOME/.codex/pets" -mindepth 1 -maxdepth 1 -type d 2>/dev/null |
+  sed "s#^$HOME/.codex/pets/##" |
   sort
 
 section "Shell Local Bin"

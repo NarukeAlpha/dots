@@ -39,6 +39,12 @@ sanitize_codex_config() {
   ' "$source" > "$tmp"
 
   awk '
+    function should_skip_section(line) {
+      return line ~ /^\[marketplaces\./ ||
+        line ~ /^\[mcp_servers\.node_repl(\.env)?\]/ ||
+        line ~ /^\[mcp_servers\.robinhood\]/
+    }
+    /^notify[[:space:]]*=/ { next }
     /^\[projects\./ {
       if ($0 == "[projects.\"__HOME__\"]" || $0 == "[projects.\"/\"]") {
         skip = 0
@@ -48,7 +54,13 @@ sanitize_codex_config() {
       skip = 1
       next
     }
-    /^\[/ { skip = 0 }
+    /^\[/ {
+      if (should_skip_section($0)) {
+        skip = 1
+        next
+      }
+      skip = 0
+    }
     !skip { print }
   ' "$tmp" > "$target"
 
@@ -131,11 +143,25 @@ sync_directory_if_present() {
 
 sanitize_codex_config
 sync_file_if_present "${HOME}/.codex/rules/default.rules" "${DOTS_ROOT}/config/codex/rules/default.rules"
+sync_file_if_present "${HOME}/.codex/keybindings.json" "${DOTS_ROOT}/config/codex/keybindings.json"
 for skill_dir in "${DOTS_ROOT}"/config/codex/skills/*; do
   [ -d "$skill_dir" ] || continue
   skill_name="$(basename "$skill_dir")"
   sync_directory_if_present "${HOME}/.codex/skills/$skill_name" "${DOTS_ROOT}/config/codex/skills/$skill_name"
 done
+if [ -d "${HOME}/.codex/pets" ]; then
+  rm -rf "${DOTS_ROOT}/config/codex/pets"
+  mkdir -p "${DOTS_ROOT}/config/codex/pets"
+  find "${HOME}/.codex/pets" -mindepth 1 -maxdepth 1 -type d | while IFS= read -r pet_dir; do
+    pet_name="$(basename "$pet_dir")"
+    mkdir -p "${DOTS_ROOT}/config/codex/pets/$pet_name"
+    sync_file_if_present "$pet_dir/pet.json" "${DOTS_ROOT}/config/codex/pets/$pet_name/pet.json"
+    sync_file_if_present "$pet_dir/spritesheet.webp" "${DOTS_ROOT}/config/codex/pets/$pet_name/spritesheet.webp"
+  done
+  echo "Synced ${DOTS_ROOT}/config/codex/pets"
+else
+  echo "Skipping missing ${HOME}/.codex/pets"
+fi
 
 sanitize_opencode_config
 sync_file_if_present "${HOME}/.config/opencode/package.json" "${DOTS_ROOT}/config/opencode/package.json"
