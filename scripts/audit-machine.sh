@@ -21,7 +21,7 @@ app_status() {
   local found=0
   local dir
 
-  for dir in /Applications "$HOME/Applications"; do
+  for dir in /Applications "$HOME/Applications" "$HOME/Documents"; do
     if [ -d "$dir/$name.app" ]; then
       printf 'present\t%s\t%s\n' "$name" "$dir/$name.app"
       found=1
@@ -65,7 +65,7 @@ sw_vers 2>/dev/null || true
 printf 'shell\t%s\n' "${SHELL:-unknown}"
 
 section "CLI Tools"
-for cmd in brew git gh node npm npx codex react-doctor react-scan opencode bun go dotnet uv uvx rustup rustc cargo mo mole pac ncode zsh security; do
+for cmd in brew git gh node npm npx codex react-doctor react-scan opencode bun go dotnet uv uvx rustup rustc cargo mo mole pac ncode code cursor zsh security; do
   command_status "$cmd"
 done
 
@@ -102,7 +102,7 @@ if command -v uv >/dev/null 2>&1; then
 fi
 
 section "Desktop Apps"
-for app in Ghostty Obsidian OpenCode Raycast Shortcat Tailscale "JetBrains Toolbox" "JetBrains Hub"; do
+for app in Ghostty Obsidian IINA CodexBar Cursor "Visual Studio Code" OpenCode Amphetamine "DaVinci Resolve" Raycast Shortcat Steam Tailscale UTM "JetBrains Toolbox" "JetBrains Hub"; do
   app_status "$app"
 done
 

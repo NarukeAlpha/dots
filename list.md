@@ -79,10 +79,18 @@ uv python list
 ## 4. Desktop Apps
 
 - [ ] Install Obsidian.
+- [ ] Install IINA.
+- [ ] Install CodexBar.
+- [ ] Install Cursor.
+- [ ] Install Visual Studio Code.
 - [ ] OpenCode Desktop is optional; the CLI is the required setup target.
+- [ ] Install Amphetamine.
+- [ ] Install DaVinci Resolve.
 - [ ] Install Raycast on macOS.
 - [ ] Install Shortcat on macOS.
+- [ ] Install Steam.
 - [ ] Install Tailscale app.
+- [ ] Install UTM.
 - [ ] Install JetBrains Toolbox / Hub.
 
 ## 5. Obsidian CLI / Vault Workflow
