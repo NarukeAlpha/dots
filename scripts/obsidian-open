@@ -1,0 +1,20 @@
+#!/bin/zsh
+set -euo pipefail
+
+vault_path="${OBSIDIAN_VAULT_PATH:-}"
+
+if [[ -z "$vault_path" && "$(uname -s)" == "Darwin" ]]; then
+  vault_path="$(security find-generic-password -s dots -a OBSIDIAN_VAULT_PATH -w 2>/dev/null || true)"
+fi
+
+if [[ "$#" -gt 0 ]]; then
+  open -a Obsidian "$@"
+  exit 0
+fi
+
+if [[ -z "$vault_path" ]]; then
+  print -u2 "Set OBSIDIAN_VAULT_PATH or store it in Keychain service dots, account OBSIDIAN_VAULT_PATH."
+  exit 1
+fi
+
+open -a Obsidian "$vault_path"

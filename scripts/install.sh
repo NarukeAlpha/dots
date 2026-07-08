@@ -12,7 +12,7 @@ usage() {
   cat <<'EOF'
 Usage: scripts/install.sh [--skip-tools] [--with-secrets] [--secrets-from-keychain] [--force]
 
-Bootstraps Node.js 24 and Codex CLI, then installs public-safe dotfiles and setup scripts.
+Bootstraps Node.js 24, uv, and Codex CLI, then installs public-safe dotfiles and setup scripts.
 
 Options:
   --skip-tools             Skip Node.js 24 and Codex CLI bootstrap.
@@ -175,6 +175,7 @@ install_node_and_codex_macos() {
 
   eval "$(brew shellenv)"
   brew install node@24
+  brew install uv
 
   local node24_bin
   node24_bin="$(brew --prefix node@24)/bin"
@@ -198,6 +199,9 @@ install_node_and_codex_linux() {
   fi
 
   npm install -g @openai/codex
+  if ! command -v uv >/dev/null 2>&1; then
+    echo "Install uv after this script: https://docs.astral.sh/uv/getting-started/installation/" >&2
+  fi
   echo "Installed Codex CLI with npm."
 }
 
@@ -229,10 +233,8 @@ if [ "$INSTALL_TOOLS" -eq 1 ]; then
 fi
 
 install_file "${DOTS_ROOT}/scripts/opencode-obsidian" "${HOME}/.local/bin/oco" 0755
-install_file "${DOTS_ROOT}/scripts/ghada" "${HOME}/.local/bin/ghada" 0755
-install_file "${DOTS_ROOT}/scripts/ghada-store-token" "${HOME}/.local/bin/ghada-store-token" 0755
-mkdir -p "${HOME}/.config/ghada"
-chmod 0700 "${HOME}/.config/ghada"
+install_file "${DOTS_ROOT}/scripts/obsidian-open" "${HOME}/.local/bin/obsidian-open" 0755
+install_file "${DOTS_ROOT}/scripts/delta-hosts-keychain.sh" "${HOME}/.local/bin/delta-hosts-keychain" 0755
 
 install_file "${DOTS_ROOT}/config/codex/rules/default.rules" "${HOME}/.codex/rules/default.rules"
 for skill_dir in "${DOTS_ROOT}"/config/codex/skills/*; do

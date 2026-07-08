@@ -1,0 +1,4 @@
+interface:
+  display_name: "Control Cleanup Orchestrator"
+  short_description: "Split Control cleanup plans into safe refactor batches"
+  default_prompt: "Use $control-cleanup-orchestrator to turn the current Control cleanup plan into staged, validated batches with clear subagent ownership."

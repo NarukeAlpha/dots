@@ -1,7 +1,7 @@
 # Setup Checklist
 
 Public-safe checklist for rebuilding the working setup on a new machine. Do not
-commit real API keys, deploy keys, SSH private keys, auth files, app histories,
+commit real API keys, deploy keys, private keys, auth files, app histories,
 session databases, or generated dependency folders.
 
 ## 1. Core Package Manager
@@ -15,7 +15,8 @@ session databases, or generated dependency folders.
 - [ ] Install Git.
 - [ ] Install GitHub CLI: `gh`.
 - [ ] Authenticate GitHub: `gh auth login`.
-- [ ] Install Node.js 24.
+- [ ] Install Node.js 24 or newer. This repo's bootstrap uses Homebrew
+  `node@24` for a stable baseline.
 - [ ] Install Codex CLI with npm: `npm install -g @openai/codex`.
 - [ ] Install React diagnostics with npm:
 
@@ -28,7 +29,15 @@ npm install -g react-doctor@latest react-scan@latest
 - [ ] Install OpenCode CLI.
 - [ ] Install Bun.
 - [ ] Install latest Go.
+- [ ] Install .NET SDKs used by local Power Platform and Dataverse work:
+  - [ ] active latest/LTS via `dotnet`
+  - [ ] 8.x via Homebrew `dotnet@8`
 - [ ] Install `uv` for Python tooling.
+
+```bash
+brew install uv
+```
+
 - [ ] Install Python versions through `uv`:
 
 ```bash
@@ -38,18 +47,45 @@ uv python list
 
 - [ ] Install Rust through `rustup` if Rust tooling is needed.
 
-## 3. Desktop Apps
+## 3. Shell And Terminal
 
 - [ ] Install Ghostty.
+- [ ] Review Ghostty config:
+  - [ ] macOS app path:
+    `~/Library/Application Support/com.mitchellh.ghostty/config`
+  - [ ] portable path, if used: `~/.config/ghostty/config`
+- [ ] Confirm `zsh` is the login shell.
+- [ ] Confirm shell PATH includes intentional tool bins:
+  - [ ] `~/.local/bin`
+  - [ ] `~/.bun/bin`
+  - [ ] `~/.cargo/bin`
+  - [ ] `~/.opencode/bin`
+- [ ] Keep manually registered shell commands available:
+  - [ ] `mo` / `mole` for Mole disk cleanup
+  - [ ] `pac`
+  - [ ] `ncode` from the manually cloned/registered ncode repo
+- [ ] Install repo-managed shell helpers:
+
+```bash
+./scripts/install.sh --skip-tools --force
+```
+
+- [ ] Review local shell-only tools with:
+
+```bash
+./scripts/audit-machine.sh
+```
+
+## 4. Desktop Apps
+
 - [ ] Install Obsidian.
-- [ ] Install Claude Desktop.
-- [ ] Install OpenCode Desktop.
+- [ ] OpenCode Desktop is optional; the CLI is the required setup target.
 - [ ] Install Raycast on macOS.
 - [ ] Install Shortcat on macOS.
-- [ ] Install Tailscale.
+- [ ] Install Tailscale app.
 - [ ] Install JetBrains Toolbox / Hub.
 
-## 4. Obsidian CLI / Vault Workflow
+## 5. Obsidian CLI / Vault Workflow
 
 - [ ] Install Obsidian desktop app.
 - [ ] Confirm Obsidian URL handling works:
@@ -59,15 +95,21 @@ open "obsidian://open"
 ```
 
 - [ ] Set `OBSIDIAN_VAULT_PATH` in Keychain, `.env`, or shell environment.
-- [ ] Install the `oco` wrapper from this repo:
+
+```bash
+security add-generic-password -U -s dots -a OBSIDIAN_VAULT_PATH -w "/path/to/vault"
+```
+
+- [ ] Install the Obsidian CLI wrappers from this repo:
 
 ```bash
 ./scripts/install.sh --force
 ```
 
+- [ ] Confirm `obsidian-open` opens the configured vault.
 - [ ] Confirm `oco` opens `opencode` in the Obsidian vault.
 
-## 5. Codex And OpenCode Config
+## 6. Codex And OpenCode Config
 
 - [ ] Store secrets outside git. Preferred on macOS: Keychain service `dots`.
 - [ ] Required Keychain accounts:
@@ -83,6 +125,18 @@ open "obsidian://open"
 - [ ] Confirm Codex config exists at `~/.codex/config.toml`.
 - [ ] Confirm Codex skills from `config/codex/skills/` exist at
   `~/.codex/skills/`.
+- [ ] Confirm the tracked Codex skill set includes:
+  - [ ] `control-cleanup-orchestrator`
+  - [ ] `dependency-hygiene`
+  - [ ] `gh-address-comments`
+  - [ ] `gh-fix-ci`
+  - [ ] `hatch-pet`
+  - [ ] `playwright`
+  - [ ] `playwright-interactive`
+  - [ ] `security-best-practices`
+  - [ ] `security-threat-model`
+  - [ ] `t3code-branch-sync`
+  - [ ] `t3code-release-merge`
 - [ ] Confirm OpenCode config exists at `~/.config/opencode/opencode.json`.
 - [ ] Do not commit rendered configs with real secrets.
 - [ ] After changing local Codex/OpenCode setup, sync public-safe templates back
@@ -90,7 +144,7 @@ open "obsidian://open"
 
 ```bash
 ./scripts/sync.sh
-./scripts/check-secrets.sh
+./scripts/verify.sh
 ```
 
 - [ ] Back up OpenCode auth tokens to macOS Keychain service `opencode-auth`:
@@ -106,23 +160,9 @@ open "obsidian://open"
 ./scripts/opencode-auth-keychain.sh restore
 ```
 
-## 6. SSH Keys
+## 7. Tailscale App And Dev Box
 
-- [ ] Prefer a fresh SSH key per machine unless a specific key must be reused.
-- [ ] Store SSH key passphrases in macOS Keychain:
-
-```bash
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-```
-
-- [ ] Do not store raw private SSH keys in this public repo.
-- [ ] If a private key must be backed up, use an encrypted backup instead of git:
-  encrypted disk image, hardware-backed password manager, `age`, or equivalent.
-- [ ] Add public keys to GitHub as needed.
-
-## 7. Tailscale And Dev Box
-
-- [ ] Install Tailscale.
+- [ ] Install Tailscale app.
 - [ ] Sign in.
 - [ ] Confirm MagicDNS works.
 - [ ] Confirm the dev box is reachable:
@@ -131,10 +171,17 @@ ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 ping delta
 ```
 
-- [ ] If local host mapping is still needed, add:
+- [ ] Back up the current `delta` host entry to Keychain:
 
-```text
-100.67.176.2 delta
+```bash
+./scripts/delta-hosts-keychain.sh backup
+./scripts/delta-hosts-keychain.sh status
+```
+
+- [ ] Restore the `delta` host entry from Keychain when needed:
+
+```bash
+./scripts/delta-hosts-keychain.sh restore
 ```
 
 to `/etc/hosts`.
@@ -161,7 +208,7 @@ gh repo clone pystardust/ani-cli
 
 ## 9. Install Script Usage
 
-Default install flow bootstraps Node 24 and Codex first, then restores public-safe files:
+Default install flow bootstraps Node 24, uv, and Codex first, then restores public-safe files:
 
 ```bash
 ./scripts/install.sh
@@ -187,17 +234,21 @@ Use `.env` / `~/.dots.env` instead of Keychain:
 
 ## 10. Public Repo Check
 
-- [ ] Run the secret/public-safety check:
+- [ ] Run the machine audit:
 
 ```bash
-./scripts/check-secrets.sh
+./scripts/audit-machine.sh
+```
+
+- [ ] Run the public-safety and syntax/config checks:
+
+```bash
+./scripts/verify.sh
 ```
 
 - [ ] Confirm no generated folders are staged:
-  - [ ] `.claude`
   - [ ] `.idea`
   - [ ] `node_modules`
   - [ ] `dist`
   - [ ] auth files
   - [ ] history/session databases
-  - [ ] SSH private keys

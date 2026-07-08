@@ -18,6 +18,7 @@
 - Do not code defensively by default. Prefer strong types, explicit invariants, and simpler control flow over redundant guards and repeated validation.
 
 Use subagents to parallelize independent, well-scoped work when it materially speeds up execution. Keep blocking or tightly coupled work local. When delegating, assign concrete ownership, avoid overlapping edits, and prefer parallel subagents for independent investigation, disjoint code changes, or verification tasks.
+For deep reads of a repository or data, use a 5.3 codex spark extra high (xhigh) subagent to increase speed.
 
 ## React Diagnostics
 
@@ -28,8 +29,10 @@ Use subagents to parallelize independent, well-scoped work when it materially sp
 ## External Model Reviews
 
 - When asked for a Gemini code review, use `opencode` through the CLI rather than generic Gemini or Google-provider calls.
-- Use OpenRouter's Gemini 3.1 Pro custom-tools model: `openrouter/google/gemini-3.1-pro-preview-customtools`.
-- Prefer review-only invocations unless the user explicitly asks the external model to edit files. Attach the relevant files with `--file`, include `--` before the prompt so opencode stops parsing files, and keep Codex responsible for applying or rejecting the feedback.
+- - Use OpenRouter's Gemini 3.1 Pro custom-tools model: `openrouter/google/gemini-3.1-pro-preview-customtools`.
+- - Prefer review-only invocations unless the user explicitly asks the external model to edit files. Attach the relevant files with `--file`, include `--` before the prompt so opencode stops parsing files, and keep Codex responsible for applying or rejecting the feedback.
+- Alternatively when asked to use kimi, use ncode -p command to prompt it. same rules applies. 
+
 
 ## Validation
 

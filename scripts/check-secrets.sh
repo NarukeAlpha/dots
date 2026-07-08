@@ -4,10 +4,24 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FAILED=0
 
-check_absent_path() {
-  local pattern="$1"
-  if find "$ROOT" -path "$pattern" -print -quit | grep -q .; then
-    echo "Disallowed path present: $pattern" >&2
+check_absent_publishable_name() {
+  local name="$1"
+  local hits
+
+  hits="$(
+    git -C "$ROOT" ls-files -co --exclude-standard | while IFS= read -r path; do
+      if [ "$path" = "$name" ] ||
+        [[ "$path" == "$name"/* ]] ||
+        [[ "$path" == */"$name" ]] ||
+        [[ "$path" == */"$name"/* ]]; then
+        printf '%s\n' "$path"
+      fi
+    done
+  )"
+
+  if [ -n "$hits" ]; then
+    echo "Disallowed publishable path present:" >&2
+    echo "$hits" >&2
     FAILED=1
   fi
 }
@@ -31,10 +45,10 @@ check_literal_secret_assignments() {
   fi
 }
 
-check_absent_path "$ROOT/**/.claude"
-check_absent_path "$ROOT/**/auth.json"
-check_absent_path "$ROOT/**/node_modules"
-check_absent_path "$ROOT/**/dist"
+check_absent_publishable_name ".claude"
+check_absent_publishable_name "auth.json"
+check_absent_publishable_name "node_modules"
+check_absent_publishable_name "dist"
 check_literal_secret_assignments
 
 if [ "$FAILED" -ne 0 ]; then

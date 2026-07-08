@@ -136,8 +136,6 @@ for skill_dir in "${DOTS_ROOT}"/config/codex/skills/*; do
   skill_name="$(basename "$skill_dir")"
   sync_directory_if_present "${HOME}/.codex/skills/$skill_name" "${DOTS_ROOT}/config/codex/skills/$skill_name"
 done
-sync_file_if_present "${HOME}/.local/bin/ghada" "${DOTS_ROOT}/scripts/ghada"
-sync_file_if_present "${HOME}/.local/bin/ghada-store-token" "${DOTS_ROOT}/scripts/ghada-store-token"
 
 sanitize_opencode_config
 sync_file_if_present "${HOME}/.config/opencode/package.json" "${DOTS_ROOT}/config/opencode/package.json"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dependency Hygiene"
+  short_description: "Audit runtime dependencies and pin versions"
+  default_prompt: "Use $dependency-hygiene to audit runtime dependencies, identify removable packages, and pin direct runtime dependency versions when appropriate."
