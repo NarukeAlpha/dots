@@ -1,40 +1,48 @@
 # dots
 
-Public-safe setup files for this Mac: config templates, selected Codex skills,
-small helper scripts, lockfiles, and source for small personal setup tools.
+Public-safe dotfiles and setup scripts for a macOS development environment.
 
-Keep out secrets, rendered auth/config state, logs, histories, generated output,
-vendored dependencies, broad notes, and temporary project material.
+It keeps the pieces used to recreate or audit the setup: config templates,
+helper scripts, selected Codex skills, lockfiles, and source for small local
+tools.
 
-## Contents
+## What Is Included
 
-- `config/codex/`: Codex config template, rules, and installable skills.
-- `config/opencode/`: OpenCode template and package metadata.
-- `personal-setup/extensions/x-sync/`: Chrome extension source; no `dist/` or
-  `node_modules/`.
-- `scripts/`: install, sync, audit, verify, Keychain, Obsidian, and hosts
-  helpers.
-- `list.md`: clean-machine setup checklist.
+- `config/codex/`: Codex config templates, rules, and installable skills.
+- `config/opencode/`: OpenCode config template and package metadata.
+- `personal-setup/extensions/x-sync/`: source for a small Chrome extension.
+- `scripts/`: bootstrap, sync, audit, verification, Keychain, Obsidian, and
+  hosts helpers.
+- `list.md`: checklist for rebuilding the environment on a clean machine.
 
-## Commands
+## Usage
+
+Review scripts before running them on a new machine.
 
 ```bash
 ./scripts/install.sh
-./scripts/install.sh --skip-tools
-./scripts/install.sh --secrets-from-keychain --force
-
-./scripts/sync.sh
-./scripts/audit-machine.sh
-./scripts/verify.sh
 ```
 
-Use `.env`, `~/.dots.env`, or macOS Keychain service `dots` for template
-secrets. Existing installed files are backed up to `~/.dots-backups/<timestamp>/`
-before replacement.
+Common variants:
 
-## Checks
+```bash
+./scripts/install.sh --skip-tools
+./scripts/install.sh --secrets-from-keychain --force
+```
 
-Run before pushing:
+Refresh public-safe templates from the current machine:
+
+```bash
+./scripts/sync.sh
+```
+
+Audit the local machine against the checklist:
+
+```bash
+./scripts/audit-machine.sh
+```
+
+Run checks:
 
 ```bash
 ./scripts/verify.sh
